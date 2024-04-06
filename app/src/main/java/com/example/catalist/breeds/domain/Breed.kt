@@ -1,7 +1,7 @@
-package com.example.catalist.model
+package com.example.catalist.breeds.domain
 
 data class Breed (
-    val id: Int,
+    val id: String,
     val name: String,
     val altName: String,
     val description: String,
