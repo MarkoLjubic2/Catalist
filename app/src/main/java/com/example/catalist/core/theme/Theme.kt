@@ -1,4 +1,4 @@
-package com.example.catalist.ui.theme
+package com.example.catalist.core.theme
 
 import android.app.Activity
 import android.os.Build
