@@ -36,7 +36,25 @@ val Data = listOf(
         strangerFriendly = 5,
         rare = 0,
         wikipediaUrl = "https://en.wikipedia.org/wiki/American_Bobtail"
+    ),
+    Breed(
+        id = "3",
+        name = "Bobtail",
+        altName = "Bobtail",
+        description = "The Abyssinian is easy to care for, and a joy to have in your home. They’re affectionate cats and love both people and other animals.",
+        temperament = listOf("Intelligent", "Interactive", "Lively", "Playful", "Sensitive"),
+        origin = "Serbia",
+        lifeSpan = "12 - 15",
+        weight = "6 - 10",
+        intelligence = 1,
+        adaptability = 3,
+        socialNeeds = 3,
+        energyLevel = 2,
+        strangerFriendly = 5,
+        rare = 0,
+        wikipediaUrl = "https://en.wikipedia.org/wiki/American_Bobtail"
     )
+
 )
 
 

@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,23 +46,25 @@ fun BreedCard(
     ) {
         Text(
             modifier = Modifier.padding(all = 10.dp),
-            text = breed.name
+            text = breed.name,
+            fontWeight = FontWeight.Bold,
+            fontSize = 20.sp
         )
 
         Text(
             modifier = Modifier.padding(all = 10.dp),
-            text = breed.altName
+            text = "Alternative name" + breed.altName
         )
 
         Text(
             modifier = Modifier.padding(all = 10.dp),
             text = breed.description.take(250) + if (breed.description.length > 250) "..." else "",
-            letterSpacing = 0.5.sp // Add more space between each letter
+            letterSpacing = 0.5.sp
         )
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             breed.temperament.take(3).forEach { temperament ->
                 Box(
@@ -72,18 +75,26 @@ fun BreedCard(
                         onClick = {},
                         label = {
                             Text(
-                                modifier = Modifier.width(IntrinsicSize.Min), // Make the width as wide as the minimum intrinsic width of the Text
+                                modifier = Modifier.width(IntrinsicSize.Min),
                                 text = temperament
                             )
                         }
                     )
                 }
             }
-
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "More",
+                modifier = Modifier.padding(bottom = 4.dp) // Add some space between the text and the icon
+            )
             Icon(
                 modifier = Modifier
-                    .padding(all = 16.dp)
-                    .weight(1f),
+                    .padding(end = 8.dp),
                 imageVector = Icons.Default.KeyboardArrowRight,
                 contentDescription = null,
             )
