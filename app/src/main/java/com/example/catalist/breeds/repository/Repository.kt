@@ -14,7 +14,7 @@ object Repository {
 
     private val breeds = MutableStateFlow(listOf<Breed>())
 
-    fun allPasswords(): List<Breed> = breeds.value
+    fun allBreeds(): List<Breed> = breeds.value
 
     suspend fun fetchBreeds() {
         delay(2.seconds)
