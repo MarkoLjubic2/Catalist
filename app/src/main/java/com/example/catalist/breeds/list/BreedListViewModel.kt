@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
+import com.example.catalist.breeds.list.BreedListContract.BreedListUiEvent
+import com.example.catalist.breeds.list.BreedListContract.BreedListState
 
 @OptIn(FlowPreview::class)
 class BreedListViewModel (
@@ -83,6 +85,6 @@ class BreedListViewModel (
         } else {
             _state.value.breeds.filter { it.name.startsWith(searchText, ignoreCase = true) }
         }
-        _state.compareAndSet(_state.value, _state.value.copy(filteredBreeds = filteredBreeds, searchText = searchText))
+        _state.compareAndSet(_state.value, _state.value.copy(filteredBreeds = filteredBreeds, searchQuery = searchText))
     }
 }
