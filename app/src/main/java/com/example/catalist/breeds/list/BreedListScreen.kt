@@ -3,7 +3,6 @@ package com.example.catalist.breeds.list
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsFocusedAsState
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,10 +11,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
@@ -30,7 +29,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -50,6 +48,8 @@ import com.example.catalist.core.composable.BreedCard
 import com.example.catalist.breeds.domain.Breed
 import com.example.catalist.breeds.repository.Data
 import com.example.catalist.core.theme.CatalistTheme
+import com.example.catalist.breeds.list.BreedListContract.BreedListState
+import com.example.catalist.breeds.list.BreedListContract.BreedListUiEvent
 
 @ExperimentalMaterial3Api
 fun NavGraphBuilder.breedListScreen(
@@ -82,7 +82,7 @@ fun BreedListScreen(
     val isTextFieldFocused = interactionSource.collectIsFocusedAsState().value
     val focusManager = LocalFocusManager.current
 
-    val searchText = remember { mutableStateOf(state.searchText) }
+    val searchText = remember { mutableStateOf(state.searchQuery) }
 
     Scaffold(
         topBar = {
@@ -123,7 +123,7 @@ fun BreedListScreen(
                         }
                     },
                     trailingIcon = {
-                        if (state.searchText.isNotEmpty()) {
+                        if (state.searchQuery.isNotEmpty()) {
                             IconButton(onClick = {
                                 searchText.value = ""
                                 eventPublisher(BreedListUiEvent.FindBreed(""))
@@ -134,6 +134,7 @@ fun BreedListScreen(
                     },
                     interactionSource = interactionSource
                 )
+           //     Spacer(modifier = Modifier.height(56.dp))
             }
         },
         content = { paddingValues ->
@@ -198,30 +199,21 @@ private fun BreedList(
     paddingValues: PaddingValues,
     onItemClick: (Breed) -> Unit
 ) {
-    val scrollState = rememberScrollState()
-    Column(
+    LazyColumn(
         modifier = Modifier
-            .verticalScroll(scrollState)
             .fillMaxSize()
             .padding(paddingValues),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top,
     ) {
-
-        items.forEach {
-            Column {
-                key(it.name) {
-                    BreedCard(
-                        breed = it,
-                        onClick = {
-                            onItemClick(it)
-                        },
-                    )
-                }
-                Spacer(modifier = Modifier.height(16.dp))
-            }
+        items(items) { breed ->
+            BreedCard(
+                breed = breed,
+                onClick = {
+                    onItemClick(breed)
+                },
+            )
+            Spacer(modifier = Modifier.height(16.dp))
         }
-
     }
 }
 

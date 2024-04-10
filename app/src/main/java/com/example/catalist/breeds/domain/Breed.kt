@@ -2,6 +2,7 @@ package com.example.catalist.breeds.domain
 
 data class Breed (
     val id: String,
+    val image: String,
     val name: String,
     val altName: String,
     val description: String,
