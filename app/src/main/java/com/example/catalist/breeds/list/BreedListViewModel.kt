@@ -16,6 +16,7 @@ import java.io.IOException
 import com.example.catalist.breeds.list.BreedListContract.BreedListUiEvent
 import com.example.catalist.breeds.list.BreedListContract.BreedListState
 
+
 @OptIn(FlowPreview::class)
 class BreedListViewModel (
     private val repository: Repository = Repository
@@ -39,7 +40,6 @@ class BreedListViewModel (
     private val searchQuery = MutableSharedFlow<String>(replay = 1)
 
     init {
-        observeBreeds()
         fetchBreeds()
         setupSearch()
     }
@@ -54,22 +54,14 @@ class BreedListViewModel (
         }
     }
 
-    private fun observeBreeds() {
-        viewModelScope.launch {
-            repository.observeBreeds().collect {
-                setState { copy(breeds = it) }
-                filterBreeds("")
-            }
-        }
-    }
-
     private fun fetchBreeds() {
         viewModelScope.launch {
             setState { copy(fetching = true) }
             try {
-                withContext(Dispatchers.IO) {
-                    repository.fetchBreeds()
+                val breeds = withContext(Dispatchers.IO) {
+                    repository.fetchAllBreeds().map { it.asBreed() }
                 }
+                setState { copy(breeds = breeds, filteredBreeds = breeds) }
             } catch (error: IOException) {
                 setState { copy(error = BreedListState.ListError.ListUpdateFailed(cause = error)) }
             } finally {
@@ -87,4 +79,6 @@ class BreedListViewModel (
         }
         _state.compareAndSet(_state.value, _state.value.copy(filteredBreeds = filteredBreeds, searchQuery = searchText))
     }
+
+
 }

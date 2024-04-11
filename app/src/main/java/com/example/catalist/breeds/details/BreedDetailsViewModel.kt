@@ -6,7 +6,6 @@ import com.example.catalist.breeds.repository.Repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -23,37 +22,26 @@ class BreedDetailsViewModel(
         _state.getAndUpdate(reducer)
 
     init {
-        //observeEvents()
-        observeBreedDetails()
         fetchBreedDetails()
     }
 
-    private fun observeBreedDetails() {
-        viewModelScope.launch {
-            repository.observeBreedDetails(breedId = breedId)
-                .filterNotNull()
-                .collect {
-                    setState { copy(data = it) }
-                }
-        }
-    }
-
-    private fun fetchBreedDetails() {
-        viewModelScope.launch {
-            setState { copy(fetching = true) }
-            try {
-                withContext(Dispatchers.IO) {
-                    repository.fetchBreedDetails(breedId = breedId)
-                }
-            } catch (error: IOException) {
-                setState {
-                    copy(error = BreedDetailsState.DetailsError.DataUpdateFailed(cause = error))
-                }
-            } finally {
-                setState { copy(fetching = false) }
-            }
-        }
-    }
+ private fun fetchBreedDetails() {
+     viewModelScope.launch {
+         setState { copy(fetching = true) }
+         try {
+             val breedDetails = withContext(Dispatchers.IO) {
+                 repository.fetchBreedDetails(breedId = breedId)
+             }
+             setState { copy(data = breedDetails) }
+         } catch (error: IOException) {
+             setState {
+                 copy(error = BreedDetailsState.DetailsError.DataUpdateFailed(cause = error))
+             }
+         } finally {
+             setState { copy(fetching = false) }
+         }
+     }
+ }
 
 
 }

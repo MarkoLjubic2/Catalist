@@ -32,7 +32,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
@@ -64,13 +63,18 @@ fun NavGraphBuilder.breedListScreen(
         eventPublisher = {
             breedListViewModel.setEvent(it)
         },
-        onItemClick = {
-            navController.navigate(route = "breeds/${it.id}")
+        onItemClick = { breed ->
+            if (state.fetching) {
+                println("Fetching in progress, ignoring click event.")
+            } else {
+                println("Navigating to breed details screen for breed: $breed")
+                navController.navigate(route = "breeds/${breed.id}")
+            }
         }
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BreedListScreen(
     state: BreedListState,
@@ -97,7 +101,7 @@ fun BreedListScreen(
             ) {
                 CenterAlignedTopAppBar(
                     title = {
-                        Text(text = "BreedList")
+                        Text(text = "Catalist")
                     }
                 )
                 TextField(
@@ -107,11 +111,14 @@ fun BreedListScreen(
                         eventPublisher(BreedListUiEvent.FindBreed(newValue))
                     },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = { keyboardController?.hide() }),
+                    keyboardActions = KeyboardActions(onDone = {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                    }),
                     label = { Text("Search") },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp),
+                        .padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 8.dp),
                     leadingIcon = {
                         if (isTextFieldFocused) {
                             IconButton(onClick = {
@@ -134,7 +141,6 @@ fun BreedListScreen(
                     },
                     interactionSource = interactionSource
                 )
-           //     Spacer(modifier = Modifier.height(56.dp))
             }
         },
         content = { paddingValues ->
