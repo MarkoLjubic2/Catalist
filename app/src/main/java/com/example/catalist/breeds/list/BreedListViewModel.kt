@@ -15,6 +15,7 @@ import kotlinx.coroutines.withContext
 import java.io.IOException
 import com.example.catalist.breeds.list.BreedListContract.BreedListUiEvent
 import com.example.catalist.breeds.list.BreedListContract.BreedListState
+import kotlinx.coroutines.flow.filterIsInstance
 
 
 @OptIn(FlowPreview::class)
@@ -31,13 +32,8 @@ class BreedListViewModel (
     fun setEvent(event: BreedListUiEvent) {
         viewModelScope.launch {
             events.emit(event)
-            if (event is BreedListUiEvent.FindBreed) {
-                searchQuery.emit(event.text)
-            }
         }
     }
-
-    private val searchQuery = MutableSharedFlow<String>(replay = 1)
 
     init {
         fetchBreeds()
@@ -46,10 +42,11 @@ class BreedListViewModel (
 
     private fun setupSearch() {
         viewModelScope.launch {
-            searchQuery
+            events
+                .filterIsInstance<BreedListUiEvent.FindBreed>()
                 .debounce(500)
-                .collect { query ->
-                    filterBreeds(query)
+                .collect { event ->
+                    filterBreeds(event.text)
                 }
         }
     }
@@ -70,15 +67,13 @@ class BreedListViewModel (
         }
     }
 
-
     private fun filterBreeds(searchText: String) {
         val filteredBreeds = if (searchText.isEmpty()) {
             _state.value.breeds
         } else {
             _state.value.breeds.filter { it.name.startsWith(searchText, ignoreCase = true) }
         }
-        _state.compareAndSet(_state.value, _state.value.copy(filteredBreeds = filteredBreeds, searchQuery = searchText))
+        setState { copy(filteredBreeds = filteredBreeds, searchQuery = searchText) }
     }
-
 
 }
