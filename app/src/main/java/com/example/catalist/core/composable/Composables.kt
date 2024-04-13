@@ -100,7 +100,7 @@ fun BreedCard(
         ) {
             Text(
                 text = "More",
-                modifier = Modifier.padding(bottom = 4.dp) // Add some space between the text and the icon
+                modifier = Modifier.padding(bottom = 4.dp)
             )
             Icon(
                 modifier = Modifier
@@ -111,7 +111,6 @@ fun BreedCard(
         }
     }
 }
-
 
 
 @Composable

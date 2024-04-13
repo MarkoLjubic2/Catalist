@@ -8,14 +8,13 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.getAndUpdate
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import com.example.catalist.breeds.list.BreedListContract.BreedListUiEvent
 import com.example.catalist.breeds.list.BreedListContract.BreedListState
-import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.debounce
 
 
 @OptIn(FlowPreview::class)
@@ -36,18 +35,21 @@ class BreedListViewModel (
     }
 
     init {
+        observeEvents()
         fetchBreeds()
-        setupSearch()
     }
 
-    private fun setupSearch() {
+    private fun observeEvents() {
         viewModelScope.launch {
             events
-                .filterIsInstance<BreedListUiEvent.FindBreed>()
-                .debounce(500)
-                .collect { event ->
-                    filterBreeds(event.text)
-                }
+                .debounce(400)
+                .collect {
+                    when (it) {
+                        is BreedListUiEvent.SearchQueryChanged -> {
+                            filterBreeds(it.query)
+                        }
+                    }
+            }
         }
     }
 

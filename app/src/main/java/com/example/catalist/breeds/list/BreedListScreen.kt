@@ -108,7 +108,7 @@ fun BreedListScreen(
                     value = searchText.value,
                     onValueChange = { newValue ->
                         searchText.value = newValue
-                        eventPublisher(BreedListUiEvent.FindBreed(newValue))
+                        eventPublisher(BreedListUiEvent.SearchQueryChanged(newValue))
                     },
                     keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                     keyboardActions = KeyboardActions(onDone = {
@@ -133,7 +133,7 @@ fun BreedListScreen(
                         if (state.searchQuery.isNotEmpty()) {
                             IconButton(onClick = {
                                 searchText.value = ""
-                                eventPublisher(BreedListUiEvent.FindBreed(""))
+                                eventPublisher(BreedListUiEvent.SearchQueryChanged(""))
                             }) {
                                 Icon(imageVector = Icons.Default.Close, contentDescription = "Clear")
                             }

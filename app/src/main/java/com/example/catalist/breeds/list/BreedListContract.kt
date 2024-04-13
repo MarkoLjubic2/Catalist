@@ -17,7 +17,7 @@ interface BreedListContract {
     }
 
     sealed class BreedListUiEvent {
-        data class FindBreed(val text: String) : BreedListUiEvent()
+        data class SearchQueryChanged(val query: String) : BreedListUiEvent()
     }
 
 }

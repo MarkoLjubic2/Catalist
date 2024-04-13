@@ -1,7 +1,5 @@
 package com.example.catalist.breeds.details
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -30,7 +28,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
@@ -234,11 +232,13 @@ private fun BreedColumn(
                 withStyle(style = SpanStyle(textDecoration = TextDecoration.Underline)) {
                     append("Rarity")
                 }
-                append(": " + when (breed.rare) {
-                    1 -> "Rare"
-                    0 -> "Not rare"
-                    else -> ""
-                })
+                append(
+                    ": " + when (breed.rare) {
+                        1 -> "Rare"
+                        0 -> "Not rare"
+                        else -> ""
+                    }
+                )
             }
         )
 
@@ -248,10 +248,15 @@ private fun BreedColumn(
         CustomIndicator(value = breed.energyLevel, "Energy Level")
         CustomIndicator(value = breed.strangerFriendly, "Stranger Friendly")
 
-        val context = LocalContext.current
+        val uriHandler = LocalUriHandler.current
         val annotatedString = buildAnnotatedString {
             append("Discover more about ")
-            withStyle(style = SpanStyle(color = Color.Blue, textDecoration = TextDecoration.Underline)) {
+            withStyle(
+                style = SpanStyle(
+                    color = Color.Blue,
+                    textDecoration = TextDecoration.Underline
+                )
+            ) {
                 append(breed.name)
             }
             addStringAnnotation(
@@ -265,17 +270,18 @@ private fun BreedColumn(
         ClickableText(
             text = annotatedString,
             onClick = { offset ->
-                val url = annotatedString.getStringAnnotations(tag = "URL", start = offset, end = offset)
-                    .firstOrNull()?.item
+                val url =
+                    annotatedString.getStringAnnotations(tag = "URL", start = offset, end = offset)
+                        .firstOrNull()?.item
                 if (url != null) {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                    context.startActivity(intent)
+                    uriHandler.openUri(url)
                 }
             },
             modifier = Modifier.padding(top = 6.dp)
         )
     }
 }
+
 
 @Composable
 fun CustomIndicator(value: Int, behavior: String) {
